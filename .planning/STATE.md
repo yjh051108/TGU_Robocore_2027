@@ -5,23 +5,21 @@
 See: .planning/PROJECT.md (updated 2026-05-01)
 
 **Core value:** 在 Robocore 框架中实现完整的装甲板自瞄流水线
-**Current focus:** Phase 1 — 数学工具工具库移植
+**Current focus:** Phase 1 — 构建系统适配
 **Milestone:** v1 — 基础自瞄装甲板系统
 
 ## Progress
 
-- Current Phase: 1/9
+- Current Phase: 1/7
 - Phases Completed: 0
-- Phases Remaining: 9
+- Phases Remaining: 7
 
 ## Status
 
-- **Phase 1**: Pending — Math Tools
-- **Phase 2**: Pending — EKF & Trajectory
-- **Phase 3**: Pending — Armor Data
-- **Phase 4**: Pending — Detector
-- **Phase 5**: Pending — Solver
-- **Phase 6**: Pending — Target Tracking
-- **Phase 7**: Pending — Aimer & Shooter
-- **Phase 8**: Pending — Config & Build
-- **Phase 9**: Pending — Integration Test
+- **Phase 1**: Pending — 构建系统适配
+- **Phase 2**: Pending — 数据结构与工具层
+- **Phase 3**: Pending — 灯条检测与装甲板匹配
+- **Phase 4**: Pending — PnP 解算
+- **Phase 5**: Pending — EKF 目标跟踪
+- **Phase 6**: Pending — 弹道预测与瞄准
+- **Phase 7**: Pending — 集成测试
