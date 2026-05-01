@@ -6,6 +6,9 @@ add_library(auto_aim STATIC
     auto_aim/classifier.cpp
     auto_aim/detector.cpp
     auto_aim/solver.cpp
+    auto_aim/target.cpp
+    auto_aim/tracker.cpp
+    auto_aim/voter.cpp
 )
 
 target_include_directories(auto_aim PUBLIC

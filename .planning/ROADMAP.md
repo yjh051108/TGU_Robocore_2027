@@ -99,7 +99,7 @@ Plans:
 
 Goal: 搬运 Target EKF 跟踪 + Tracker 状态机 + Voter 投票。
 
-**Plans:** {N} plans
+**Plans:** 3 plans
 
 Success criteria:
 1. ExtendedKalmanFilter 实现（predict/update，自定义 h/z_subtract）
@@ -108,6 +108,11 @@ Success criteria:
 4. 发散检测与收敛判断
 
 Depends on: Phase 4
+
+Plans:
+- [ ] 05-01-PLAN.md — Create ExtendedKalmanFilter (tools/) + Voter (app/auto_aim/), update tools/CMakeLists.txt
+- [ ] 05-02-PLAN.md — Create Target class (11D EKF, armor matching, update, divergence/convergence)
+- [ ] 05-03-PLAN.md — Create Tracker (TOML config, state machine, center_norm), update app/CMake, verify build
 
 ### Phase 6: 弹道预测与瞄准
 

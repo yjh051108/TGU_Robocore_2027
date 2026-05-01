@@ -6,6 +6,7 @@ add_library(tools STATIC
     foxglove_comm.cpp
     math_tools.cpp
     img_tools.cpp
+    extended_kalman_filter.cpp
 )
 
 target_include_directories(tools PUBLIC

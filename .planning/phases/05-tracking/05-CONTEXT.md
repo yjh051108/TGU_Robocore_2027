@@ -87,6 +87,8 @@
 ## Deferred Ideas
 
 - 哨兵多相机模式（omniperception）— 未来独立分支开发
+- TODO: Tracker 的 omniperception 第二个 `track()` 重载已删除，如需哨兵模式：
+  `git checkout -b sentry && git revert <commit-that-removed-overload>`
 
 </deferred>
 
