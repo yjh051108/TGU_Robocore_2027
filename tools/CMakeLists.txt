@@ -7,6 +7,7 @@ add_library(tools STATIC
     math_tools.cpp
     img_tools.cpp
     extended_kalman_filter.cpp
+    trajectory.cpp
 )
 
 target_include_directories(tools PUBLIC

@@ -118,7 +118,7 @@ Plans:
 
 Goal: 搬运 Aimer 瞄准点选择和弹道迭代 + Shooter 射击判定。
 
-**Plans:** {N} plans
+**Plans:** 2 plans
 
 Success criteria:
 1. Trajectory 弹道解算
@@ -127,6 +127,10 @@ Success criteria:
 4. 射击条件判定
 
 Depends on: Phase 5
+
+Plans:
+- [ ] 06-01-PLAN.md — Create Command struct + ShootMode enum + Trajectory ballistic solver, update tools/CMakeLists.txt
+- [ ] 06-02-PLAN.md — Create Aimer (TOML config, LOG_XXX, lock/gyro modes, trajectory iteration) + Shooter (TOML config, fire decision), update app/CMakeLists.txt
 
 ### Phase 7: 集成测试
 

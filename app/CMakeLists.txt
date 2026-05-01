@@ -9,6 +9,8 @@ add_library(auto_aim STATIC
     auto_aim/target.cpp
     auto_aim/tracker.cpp
     auto_aim/voter.cpp
+    auto_aim/aimer.cpp
+    auto_aim/shooter.cpp
 )
 
 target_include_directories(auto_aim PUBLIC
