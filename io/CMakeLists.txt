@@ -15,7 +15,7 @@ add_library(io STATIC
 
 target_link_libraries(io
         PUBLIC
-#        tools
+        tools
         boost_system
         pthread
 )

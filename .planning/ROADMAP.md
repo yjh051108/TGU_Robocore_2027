@@ -22,6 +22,8 @@
 
 Goal: 在 Robocore 框架中新增 Eigen3 和 fmt 依赖，创建 `tools/CMakeLists.txt`，启用 `app/` 子目录，确保项目完整编译通过。
 
+**Plans:** 2 plans
+
 Success criteria:
 1. Eigen3 安装并可在项目中 `#include <Eigen/Dense>`
 2. `tools/` 有 CMakeLists.txt，编译为静态库
@@ -29,6 +31,10 @@ Success criteria:
 4. 项目完整编译通过，无链接错误
 
 Depends on: — (基础设施建设)
+
+Plans:
+- [ ] 01-01-PLAN.md — Install build toolchain and system dependencies (cmake, g++, Eigen3, Boost, OpenCV, Aravis, libusb)
+- [ ] 01-02-PLAN.md — Create/update CMake configuration files, verify full build
 
 ### Phase 2: 数据结构与工具层
 

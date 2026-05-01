@@ -16,13 +16,15 @@ find_package(OpenCV REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(ARAVIS REQUIRED aravis-0.8)
 
-#find_package(Eigen3 REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${ARAVIS_INCLUDE_DIRS})
 
+add_compile_definitions(BOOST_ASIO_DISABLE_CONCEPTS)
+
 # ===== 子模块 =====
-add_subdirectory(io)
-#add_subdirectory(app)
-add_subdirectory(task)
 add_subdirectory(tools)
+add_subdirectory(io)
+add_subdirectory(app)
+add_subdirectory(task)
