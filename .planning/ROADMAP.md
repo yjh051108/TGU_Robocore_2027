@@ -40,13 +40,21 @@ Plans:
 
 Goal: 搬运自瞄核心数据结构和数学工具。
 
+**Plans:** 3 plans
+
 Success criteria:
 1. armor.hpp/.cpp 完整迁移（Lightbar、Armor、枚举）
 2. math_tools.hpp/.cpp 完整迁移（limit_rad、eulers、xyz2ypd 等）
 3. img_tools.hpp/.cpp 完整迁移（绘制函数）
 4. 全部适配 Robocore 命名规范（namespace app::auto_aim、蛇形命名、include guard）
+5. 项目完整编译通过，无链接错误
 
 Depends on: Phase 1
+
+Plans:
+- [ ] 02-01-PLAN.md — 创建 app/auto_aim/armor.hpp/.cpp（数据结构迁移）
+- [ ] 02-02-PLAN.md — 创建 tools/math_tools.hpp/.cpp 和 tools/img_tools.hpp/.cpp（工具函数迁移）
+- [ ] 02-03-PLAN.md — 更新 CMakeLists.txt 并验证完整编译
 
 ### Phase 3: 灯条检测与装甲板匹配
 
