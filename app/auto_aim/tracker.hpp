@@ -6,8 +6,11 @@
 #include <chrono>
 #include <list>
 #include <string>
+#include <tuple>
+#include <vector>
 
 #include "app/auto_aim/armor.hpp"
+#include "app/auto_aim/detection_result.hpp"
 #include "app/auto_aim/solver.hpp"
 #include "app/auto_aim/target.hpp"
 
@@ -23,6 +26,10 @@ public:
     std::list<Armor> & armors, std::chrono::steady_clock::time_point t,
     bool use_enemy_color = true);
 
+  std::tuple<omniperception::DetectionResult, std::list<Target>> track(
+    const std::vector<omniperception::DetectionResult> & detection_queue, std::list<Armor> & armors,
+    std::chrono::steady_clock::time_point t, bool use_enemy_color = true);
+
 private:
   Solver & solver_;
   Color enemy_color_;
@@ -30,11 +37,12 @@ private:
   int max_temp_lost_count_;
   int detect_count_;
   int temp_lost_count_;
-  // int outpost_max_temp_lost_count_;  // TODO: uncomment for sentry branch
-  // int normal_temp_lost_count_;
+  int outpost_max_temp_lost_count_;
+  int normal_temp_lost_count_;
   std::string state_, pre_state_;
   Target target_;
   std::chrono::steady_clock::time_point last_timestamp_;
+  ArmorPriority omni_target_priority_;
 
   void state_machine(bool found);
 

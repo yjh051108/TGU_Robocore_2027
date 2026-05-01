@@ -2,7 +2,7 @@
 
 ## Overview
 
-**7 phases** | **All v1 requirements covered ✓**
+**8 phases** | **All v1 requirements covered ✓**
 
 | # | Phase | Goal |
 |---|-------|------|
@@ -13,6 +13,7 @@
 | 5 | EKF 目标跟踪 | 搬运 target、tracker、voter、EKF 实现 |
 | 6 | 弹道预测与瞄准 | 搬运 trajectory、aimer、shooter |
 | 7 | 集成测试 | 创建配置和测试程序，验证完整流水线 |
+| 8 | 哨兵多相机模式 | 恢复 omniperception、outpost/base 特判、哨兵入口 |
 
 ---
 
@@ -166,4 +167,19 @@ graph TD
     P4 --> P7
     P5 --> P7
     P6 --> P7
+    P5 --> P8
+    P3 --> P8
+    P7 --> P8
 ```
+
+### Phase 8: 哨兵多相机模式
+
+Goal: 在 sentry 分支上恢复全向感知模块，还原 outpost/base 目标特判，迁移哨兵多相机入口代码。
+
+Depends on: Phase 5, Phase 3, Phase 7
+
+Success criteria:
+1. 恢复 Tracker 的第二个 track() 重载（omniperception）
+2. 恢复 Target 的 outpost/base 3 装甲板特判
+3. 迁移 omniperception 模块（DetectionResult 等核心类型）
+4. 编译通过

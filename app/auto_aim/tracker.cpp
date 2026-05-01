@@ -1,5 +1,7 @@
 #include "app/auto_aim/tracker.hpp"
 
+#include <numeric>
+
 #include "tools/logger.hpp"
 #include "tools/math_tools.hpp"
 #include "tools/tomlpp.hpp"
@@ -14,14 +16,15 @@ Tracker::Tracker(const std::string & config_path, Solver & solver)
   temp_lost_count_(0),
   state_("lost"),
   pre_state_("lost"),
-  last_timestamp_(std::chrono::steady_clock::now())
+  last_timestamp_(std::chrono::steady_clock::now()),
+  omni_target_priority_{ArmorPriority::fifth}
 {
   auto config = toml::parse_file(config_path);
   enemy_color_ = (config["tracker"]["enemy_color"].value_or<std::string>("") == "red") ? Color::red : Color::blue;
   min_detect_count_ = static_cast<int>(config["tracker"]["min_detect_count"].value_or<int64_t>(5));
   max_temp_lost_count_ = static_cast<int>(config["tracker"]["max_temp_lost_count"].value_or<int64_t>(50));
-  // outpost_max_temp_lost_count_ = config["tracker"]["outpost_max_temp_lost_count"].value_or<int64_t>(200);  // TODO: sentry branch
-  // normal_temp_lost_count_ = max_temp_lost_count_;
+  outpost_max_temp_lost_count_ = static_cast<int>(config["tracker"]["outpost_max_temp_lost_count"].value_or<int64_t>(200));
+  normal_temp_lost_count_ = max_temp_lost_count_;
 }
 
 std::string Tracker::state() const { return state_; }
@@ -81,16 +84,79 @@ std::list<Target> Tracker::track(
   return targets;
 }
 
+std::tuple<omniperception::DetectionResult, std::list<Target>> Tracker::track(
+  const std::vector<omniperception::DetectionResult> & detection_queue, std::list<Armor> & armors,
+  std::chrono::steady_clock::time_point t, bool use_enemy_color)
+{
+  omniperception::DetectionResult switch_target{std::list<Armor>(), t, 0, 0};
+  omniperception::DetectionResult temp_target{std::list<Armor>(), t, 0, 0};
+  if (!detection_queue.empty()) {
+    temp_target = detection_queue.front();
+  }
+
+  auto dt = tools::delta_time(t, last_timestamp_);
+  last_timestamp_ = t;
+
+  if (state_ != "lost" && dt > 0.1) {
+    LOG_WARN(MODULE, "[Tracker] Large dt: {:.3f}s", dt);
+    state_ = "lost";
+  }
+
+  // filter by image center distance
+  armors.sort([](const Armor & a, const Armor & b) {
+    cv::Point2f img_center(0.5f, 0.5f);
+    auto distance_1 = cv::norm(a.center_norm - img_center);
+    auto distance_2 = cv::norm(b.center_norm - img_center);
+    return distance_1 < distance_2;
+  });
+
+  armors.sort([](const Armor & a, const Armor & b) { return a.priority < b.priority; });
+
+  bool found;
+  if (state_ == "lost") {
+    found = set_target(armors, t);
+  } else if (state_ == "tracking" && !armors.empty() && armors.front().priority < target_.priority) {
+    found = set_target(armors, t);
+    LOG_DEBUG(MODULE, "auto_aim switch target to {}", ARMOR_NAMES[armors.front().name]);
+  } else if (
+    state_ == "tracking" && !temp_target.armors.empty() &&
+    temp_target.armors.front().priority < target_.priority && target_.convergened()) {
+    state_ = "switching";
+    switch_target = omniperception::DetectionResult{
+      temp_target.armors, t, temp_target.delta_yaw, temp_target.delta_pitch};
+    omni_target_priority_ = temp_target.armors.front().priority;
+    found = false;
+    LOG_DEBUG(MODULE, "omniperception find higher priority target");
+  } else if (state_ == "switching") {
+    found = !armors.empty() && armors.front().priority == omni_target_priority_;
+  } else if (state_ == "detecting" && pre_state_ == "switching") {
+    found = set_target(armors, t);
+  } else {
+    found = update_target(armors, t);
+  }
+
+  pre_state_ = state_;
+  state_machine(found);
+
+  if (state_ != "lost" && target_.diverged()) {
+    LOG_DEBUG(MODULE, "[Tracker] Target diverged!");
+    state_ = "lost";
+    return {switch_target, {}};
+  }
+
+  if (state_ == "lost") return {switch_target, {}};
+
+  std::list<Target> targets = {target_};
+  return {switch_target, targets};
+}
+
 void Tracker::state_machine(bool found)
 {
   if (state_ == "lost") {
     if (!found) return;
-
     state_ = "detecting";
     detect_count_ = 1;
-  }
-
-  else if (state_ == "detecting") {
+  } else if (state_ == "detecting") {
     if (found) {
       detect_count_++;
       if (detect_count_ >= min_detect_count_) state_ = "tracking";
@@ -98,25 +164,26 @@ void Tracker::state_machine(bool found)
       detect_count_ = 0;
       state_ = "lost";
     }
-  }
-
-  else if (state_ == "tracking") {
+  } else if (state_ == "tracking") {
     if (found) return;
-
     temp_lost_count_ = 1;
     state_ = "temp_lost";
-  }
-
-  else if (state_ == "temp_lost") {
+  } else if (state_ == "switching") {
+    if (found) {
+      state_ = "detecting";
+    } else {
+      temp_lost_count_++;
+      if (temp_lost_count_ > 200) state_ = "lost";
+    }
+  } else if (state_ == "temp_lost") {
     if (found) {
       state_ = "tracking";
     } else {
       temp_lost_count_++;
-      // TODO sentry branch: outpost uses larger temp_lost_count
-      // if (target_.name == ArmorName::outpost)
-      //   max_temp_lost_count_ = outpost_max_temp_lost_count_;
-      // else
-      //   max_temp_lost_count_ = normal_temp_lost_count_;
+      if (target_.name == ArmorName::outpost)
+        max_temp_lost_count_ = outpost_max_temp_lost_count_;
+      else
+        max_temp_lost_count_ = normal_temp_lost_count_;
 
       if (temp_lost_count_ > max_temp_lost_count_) state_ = "lost";
     }
@@ -137,19 +204,13 @@ bool Tracker::set_target(std::list<Armor> & armors, std::chrono::steady_clock::t
   if (is_balance) {
     Eigen::VectorXd P0_dig{{1, 64, 1, 64, 1, 64, 0.4, 100, 1, 1, 1}};
     target_ = Target(armor, t, 0.2, 2, P0_dig);
-  }
-
-  // TODO sentry branch: outpost/base use different armor counts
-  // else if (armor.name == ArmorName::outpost) {
-  //   Eigen::VectorXd P0_dig{{1, 64, 1, 64, 1, 81, 0.4, 100, 1e-4, 0, 0}};
-  //   target_ = Target(armor, t, 0.2765, 3, P0_dig);
-  // }
-  // else if (armor.name == ArmorName::base) {
-  //   Eigen::VectorXd P0_dig{{1, 64, 1, 64, 1, 64, 0.4, 100, 1e-4, 0, 0}};
-  //   target_ = Target(armor, t, 0.3205, 3, P0_dig);
-  // }
-
-  else {
+  } else if (armor.name == ArmorName::outpost) {
+    Eigen::VectorXd P0_dig{{1, 64, 1, 64, 1, 81, 0.4, 100, 1e-4, 0, 0}};
+    target_ = Target(armor, t, 0.2765, 3, P0_dig);
+  } else if (armor.name == ArmorName::base) {
+    Eigen::VectorXd P0_dig{{1, 64, 1, 64, 1, 64, 0.4, 100, 1e-4, 0, 0}};
+    target_ = Target(armor, t, 0.3205, 3, P0_dig);
+  } else {
     Eigen::VectorXd P0_dig{{1, 64, 1, 64, 1, 64, 0.4, 100, 1, 1, 1}};
     target_ = Target(armor, t, 0.2, 4, P0_dig);
   }
@@ -172,14 +233,10 @@ bool Tracker::update_target(std::list<Armor> & armors, std::chrono::steady_clock
   if (found_count == 0) return false;
 
   for (auto & armor : armors) {
-    if (
-      armor.name != target_.name || armor.type != target_.armor_type
-      //  || armor.center.x != min_x
-    )
+    if (armor.name != target_.name || armor.type != target_.armor_type)
       continue;
 
     solver_.solve(armor);
-
     target_.update(armor);
   }
 
