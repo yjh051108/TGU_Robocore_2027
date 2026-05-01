@@ -60,13 +60,23 @@ Plans:
 
 Goal: 搬运 Detector 核心视觉算法。
 
+**Plans:** 2 plans
+
 Success criteria:
 1. 完整的灯条提取流程（灰度化→二值化→轮廓→灯条校验）
 2. 装甲板配对与几何校验
 3. 共用灯条去重逻辑
 4. Debug 可视化
+5. OpenVINO 数字分类器迁移
+6. YAML 到 TOML 配置文件格式迁移
+7. YOLO ROI 精修重载
+8. 项目完整编译通过
 
 Depends on: Phase 2
+
+Plans:
+- [ ] 03-01-PLAN.md — Install OpenVINO + fmt, update CMake, create Classifier (TOML config, OpenVINO)
+- [ ] 03-02-PLAN.md — Create Detector (TOML config, LOG_XXX logging, remove PCA corrector)
 
 ### Phase 4: PnP 解算
 

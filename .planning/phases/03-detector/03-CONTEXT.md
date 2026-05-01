@@ -41,8 +41,8 @@
 - **D-15:** 保存路径由 debug 模式控制
 
 ### PCA 角点矫正
-- **D-16:** 不迁移 lightbar_points_corrector（原项目已禁用）
-- **D-17:** 理由：作者 commit 583d50a 显示已切换回传统方法，原代码是死代码
+- **D-16:** 迁移 lightbar_points_corrector 但保持注释状态（作为兜底）
+- **D-17:** 在原项目 commit 583d50a 已禁用，未来如需激活可取消注释
 
 ### YOLO detect 重载
 - **D-18:** 迁移 `detect(Armor&, const cv::Mat&)` 函数
