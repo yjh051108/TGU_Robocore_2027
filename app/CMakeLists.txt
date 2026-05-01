@@ -5,6 +5,7 @@ add_library(auto_aim STATIC
     auto_aim/armor.cpp
     auto_aim/classifier.cpp
     auto_aim/detector.cpp
+    auto_aim/solver.cpp
 )
 
 target_include_directories(auto_aim PUBLIC

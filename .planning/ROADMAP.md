@@ -82,6 +82,8 @@ Plans:
 
 Goal: 搬运 Solver 坐标变换和姿态解算。
 
+**Plans:** 1 plan
+
 Success criteria:
 1. 大/小装甲板 3D 模型点定义
 2. solvePnP_IPPE 解算
@@ -90,9 +92,14 @@ Success criteria:
 
 Depends on: Phase 2
 
+Plans:
+- [ ] 04-01-PLAN.md — Create solver.hpp/cpp with TOML config, PnP solve, coordinate transforms, yaw optimization
+
 ### Phase 5: EKF 目标跟踪
 
 Goal: 搬运 Target EKF 跟踪 + Tracker 状态机 + Voter 投票。
+
+**Plans:** {N} plans
 
 Success criteria:
 1. ExtendedKalmanFilter 实现（predict/update，自定义 h/z_subtract）
@@ -106,6 +113,8 @@ Depends on: Phase 4
 
 Goal: 搬运 Aimer 瞄准点选择和弹道迭代 + Shooter 射击判定。
 
+**Plans:** {N} plans
+
 Success criteria:
 1. Trajectory 弹道解算
 2. 瞄准点选择（锁定模式/小陀螺模式）
@@ -117,6 +126,8 @@ Depends on: Phase 5
 ### Phase 7: 集成测试
 
 Goal: 创建配置文件和测试程序，验证完整自瞄流水线。
+
+**Plans:** {N} plans
 
 Success criteria:
 1. `config/auto_aim.toml` 配置

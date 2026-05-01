@@ -35,6 +35,10 @@
 - **D-11:** 完整 include 路径
 - **D-12:** Solver 无日志调用，无需日志适配
 - **D-13:** 3D 模型点常量（BIG_ARMOR_POINTS, SMALL_ARMOR_POINTS）保持硬编码
+- **D-14:** 保留 `is_balance` 平衡步兵特判（跳过 yaw 优化）
+- **D-15:** 保留 `set_R_gimbal2world()` IMU 接口
+- **D-16:** 保留 `world2pixel()` 投影函数
+- **D-17:** 保留 `yaw_raw` 调试字段
 
 </decisions>
 
