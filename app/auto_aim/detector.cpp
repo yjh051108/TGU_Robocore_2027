@@ -38,7 +38,7 @@ std::list<Armor> Detector::detect(const cv::Mat & bgr_img, int frame_count)
 
   cv::Mat binary_img;
   cv::threshold(gray_img, binary_img, threshold_, 255, cv::THRESH_BINARY);
-  cv::imshow("binary_img", binary_img);
+  if (debug_) cv::imshow("binary_img", binary_img);
 
   std::vector<std::vector<cv::Point>> contours;
   cv::findContours(binary_img, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_NONE);

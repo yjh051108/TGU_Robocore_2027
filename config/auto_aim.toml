@@ -1,0 +1,42 @@
+[detector]
+threshold = 150.0
+max_angle_error = 15.0
+min_lightbar_ratio = 1.5
+max_lightbar_ratio = 10.0
+min_lightbar_length = 10.0
+min_armor_ratio = 1.0
+max_armor_ratio = 4.0
+max_side_ratio = 2.0
+min_confidence = 0.5
+max_rectangular_error = 20.0
+
+[classifier]
+classify_model = "config/models/tiny_resnet.onnx"
+
+[solver]
+yaw_search_range = 140
+R_gimbal2imubody = [1, 0, 0, 0, 1, 0, 0, 0, 1]
+R_camera2gimbal = [1, 0, 0, 0, 1, 0, 0, 0, 1]
+t_camera2gimbal = [0, 0, 0]
+camera_matrix = [2666.67, 0, 720, 0, 2666.67, 540, 0, 0, 1]
+distort_coeffs = [0, 0, 0, 0, 0]
+
+[tracker]
+enemy_color = "red"
+min_detect_count = 5
+max_temp_lost_count = 50
+
+[aimer]
+yaw_offset = 0.0
+pitch_offset = 0.0
+comming_angle = 180.0
+leaving_angle = 0.0
+high_speed_delay_time = 0.1
+low_speed_delay_time = 0.1
+decision_speed = 3.0
+
+[shooter]
+first_tolerance = 8.0
+second_tolerance = 15.0
+judge_distance = 5.0
+auto_fire = true

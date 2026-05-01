@@ -136,7 +136,7 @@ Plans:
 
 Goal: 创建配置文件和测试程序，验证完整自瞄流水线。
 
-**Plans:** {N} plans
+**Plans:** 2 plans
 
 Success criteria:
 1. `config/auto_aim.toml` 配置
@@ -144,6 +144,10 @@ Success criteria:
 3. 所有模块正确链接，编译通过
 
 Depends on: Phase 1~6
+
+Plans:
+- [ ] 07-01-PLAN.md — Create config/auto_aim.toml (6 sections), fix detector.cpp imshow guard, copy tiny_resnet.onnx
+- [ ] 07-02-PLAN.md — Create test_auto_aim.cpp (7 test functions) + update task/CMakeLists.txt
 
 ---
 
